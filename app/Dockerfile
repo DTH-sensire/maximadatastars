@@ -6,7 +6,7 @@ FROM python:3.9
 ENV PYTHONUNBUFFERED True
 
 # Copy local code to the container image.
-WORKDIR $APP_HOME
+# WORKDIR $APP_HOME
 COPY . ./
 
 # Install production dependencies.
