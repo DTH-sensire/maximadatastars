@@ -61,6 +61,7 @@
           started: false,
           completed: false,
           sendingGeminiRequest: false,
+          showPhoto: false,
           activeQuestionIndex: 0,
           patientId: 0,
           clients: [],
@@ -107,6 +108,8 @@
           start() {
             this.started = true;
             this.completed = false;
+            this.sendingGeminiRequest = false;
+            this.showPhoto = false;
             this.activeQuestionIndex = 0;
             this.answers = [];
             this.suggestions = '';
@@ -114,6 +117,8 @@
           restart() {
             this.started = false;
             this.completed = false;
+            this.sendingGeminiRequest = false;
+            this.showPhoto = false;
             this.activeQuestionIndex = 0;
             this.answers = [];
             this.suggestions = '';
@@ -183,6 +188,10 @@
             })[0];
 
             return selectedClient.firstname;
+          },
+          generateCollage() {
+            this.showPhoto = true;
+            this.completed = false;
           }
         }
       }
@@ -237,6 +246,26 @@
                     
                     <div class="mx-auto mt-8 flex flex-col items-center flex-1">
                         <div class="flex items-center gap-2 mt-5">
+                            <button @click="generateCollage()"
+                                class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Generate collage</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Show hard-coded photo -->
+                <div x-show="showPhoto">
+                    <h2 class="text-base font-semibold leading-7 text-indigo-400">Maxima's Data Stars</h2>
+
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Collage</p>
+                    
+                    <div class="mx-auto mt-8 flex flex-col items-center flex-1">
+                        <div class="flex items-center gap-2 mt-5">
+                            <img src="https://storage.googleapis.com/photos-maximadatastars/collage.png" />
+                        </div>
+                    </div>
+
+                    <div class="mx-auto mt-8 flex flex-col items-center flex-1">
+                        <div class="flex items-center gap-2 mt-5">
                             <button @click="restart()"
                                 class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Restart</button>
                         </div>
@@ -244,7 +273,7 @@
                 </div>
 
                 <!-- Questions -->
-                <div x-show="started && !completed && !sendingGeminiRequest" id="form" class="flex text-left">
+                <div x-show="started && !completed && !sendingGeminiRequest && !showPhoto" id="form" class="flex text-left">
                     <div class="w-full max-w-2xl px-5" id="multistep-form">
                         <div>
                             <form class="p-10" @submit.prevent="">
@@ -336,7 +365,7 @@
                 <!-- End Vue form -->
 
                 <!-- Footer navigation -->
-                <footer x-show="started && !completed" class="fixed bottom-0 right-0 flex flex-row-reverse justify-start px-10 py-5">
+                <footer x-show="started && !completed && !sendingGeminiRequest && !showPhoto" class="fixed bottom-0 right-0 flex flex-row-reverse justify-start px-10 py-5">
                     <button @click="showNextQuestion(document.getElementById(`question-input-${activeQuestionIndex}`));" class="px-3 py-3 text-white border-l rounded rounded-l-none bg-neutral-900 border-neutral-600 disabled:text-neutral-500" :disabled="activeQuestionIndex==questions.length">
                         <svg height="9" width="14" fill="currentColor">
                             <path d="M12.293.293l1.414 1.414L7 8.414.293 1.707 1.707.293 7 5.586z"></path>
