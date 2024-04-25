@@ -175,37 +175,13 @@ def test():
     response = request.json["response"]
     # Retrieve PatientData dictionary
     patient_data = response["patientData"]
+    firstname = patient_data["firstname"]
 
     # Retrieve AnswersQuestions list
     answers = response["answersAndQuestions"]
     # answers = {}  # make dictionary with question as key and answer as value
     # for item in answers_questions:
     #     answers[item['question']] = item['answer']
-
-    # Replace the placeholders in the PROMPT_TEMPLATE
-    firstname = patient_data["firstname"]
-    PROMPT_TEMPLATE.format(relation=answers["relationship"],
-                           firstname=firstname,
-                           relation_age=answers["age"],
-                           diagnosis=patient_data["diagnosis"],
-                           diagnosis_stage=patient_data["diagnosis_stage"],
-                           treatment=patient_data["treatment"],
-                           medicine=patient_data["medicine"],
-                           symptoms=patient_data["symptoms"],
-                           gender=patient_data["gender"],
-                           date_of_birth=patient_data["date_of_birth"],
-                           interests=answers["interests"],
-                           favorites=answers["favorites"],
-                           social_interaction=answers["socialising_activities"],
-                           creative=answers["creative_activities"],
-                           curious=answers["learner"],
-                           nature=answers["outdoor_activities"],
-                           animals=answers["animal_affinity"],
-                           technology=answers["computers_interests"],
-                           wishes=answers["wishes"],
-                           outside=answers["indoor_activities"],
-                           residence=patient_data["residence"],
-                           )
 
     llm = VertexAI(
         model_name="gemini-1.5-pro-preview-0409",
@@ -222,7 +198,28 @@ def test():
 
     chain = (prompt | model_parser)
 
-    output = chain.invoke({})
+    output = chain.invoke({"relation": answers["relationship"],
+                           "firstname": firstname,
+                           "relation_age": answers["age"],
+                           "diagnosis": patient_data["diagnosis"],
+                           "diagnosis_stage": patient_data["diagnosis_stage"],
+                           "treatment": patient_data["treatment"],
+                           "medicine": patient_data["medicine"],
+                           "symptoms": patient_data["symptoms"],
+                           "gender": patient_data["gender"],
+                           "date_of_birth": patient_data["date_of_birth"],
+                           "interests": answers["interests"],
+                           "favorites": answers["favorites"],
+                           "social_interaction": answers["socialising_activities"],
+                           "creative": answers["creative_activities"],
+                           "curious": answers["learner"],
+                           "nature": answers["outdoor_activities"],
+                           "animals": answers["animal_affinity"],
+                           "technology": answers["computers_interests"],
+                           "wishes": answers["wishes"],
+                           "outside": answers["indoor_activities"],
+                           "residence": patient_data["residence"]
+                           })
 
     response = {"prompt": PROMPT_TEMPLATE, "llm_answer": output}
 
