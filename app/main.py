@@ -183,8 +183,9 @@ def test():
         answers[item['question']] = item['answer']
 
     # Replace the placeholders in the PROMPT_TEMPLATE
-    PROMPT_TEMPLATE.format(relation=answers[f"What is your relationship with {patient_data["firstname"]}"],
-                           firstname=patient_data["firstname"],
+    firstname = patient_data["firstname"]
+    PROMPT_TEMPLATE.format(relation=answers[f"What is your relationship with {firstname}"],
+                           firstname=firstname,
                            relation_age=answers["What is your age?"],
                            diagnosis=patient_data["diagnosis"],
                            diagnosis_stage=patient_data["diagnosis_stage"],
@@ -206,7 +207,25 @@ def test():
                            residence=patient_data["residence"],
                            )
 
-    response = {"response": PROMPT_TEMPLATE}
+    llm = VertexAI(
+        model_name="gemini-1.5-pro-preview-0409",
+        max_output_tokens=750,
+        temperature=0,
+        top_p=0.8,
+        top_k=20,
+        verbose=True,
+    )
+
+    model_parser = llm | StrOutputParser()
+
+    prompt = PromptTemplate.from_template(PROMPT_TEMPLATE)
+
+    chain = (prompt | model_parser)
+
+    output = chain.invoke({})
+
+    response = {"prompt": PROMPT_TEMPLATE, "llm_answer": output}
+
     return response
 
 
