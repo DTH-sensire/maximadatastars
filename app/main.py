@@ -164,7 +164,8 @@ Have they expressed a wish to try something specific?: {wishes}
 Would they prefer indoor activities or spending time in the open air?: {outside}
 
 
-I would like do activities with {firstname}, can you make a list of recommendations based on his capabilities and the place we live: {residence}?
+I would like do activities with {firstname}, can you make a list of recommendations based on his capabilities based on the place we live: {residence}?
+Also give recommendations of activities are considered "daily activities". And recommend how I can capture these memories.
 
 RECOMMENDATIONS:
 """
