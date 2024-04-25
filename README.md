@@ -25,6 +25,8 @@ In a production environment this data will be collected from the EHR.
 The answers collected through the webapp combined with the data from BigQuery will be used as the input for an API call to a pyhton script on Cloud Run. The pyhton script will generate a prompt for Vertex AI.
 Vertex AI (Gemini) will be send the result, what is a great activity to do, back to the webapp.
 
+<img width="700" alt="main_screen" src="https://github.com/DTH-sensire/maximadatastars/blob/main/images/architecture.png">
+
 ### Improvements for production
 
 * Answers given in the webapp should be stored in BigQuery.
