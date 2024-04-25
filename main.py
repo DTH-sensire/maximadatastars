@@ -59,20 +59,14 @@ app = Flask(__name__)
 
 
 def get_bigquery_client() -> bigquery.Client():
-    return bigquery.Client(project="sensire-dataplatform-prod")
+    return bigquery.Client(project="qwiklabs-gcp-03-c86c31d83de6")
 
-def get_query_dagrapportages(subject_id, date_range) -> str:
+def get_query_patientdata(subject_id, date_range) -> str:
     return (
             'SELECT CONCAT(createdat, " ", content_text) AS datum_dagrapportages FROM `sensire-dataplatform-prod.raw_ysis.rapportage_ecd`'
             f'WHERE clientid = \'{subject_id}\' AND PARSE_TIMESTAMP("%m/%d/%Y %H:%M", createdat) > TIMESTAMP(DATE \'{date_range["start"]}\', "Europe/Brussels") AND '
             f'PARSE_TIMESTAMP("%m/%d/%Y %H:%M", createdat) < TIMESTAMP(DATE \'{date_range["end"]}\', "Europe/Brussels")'
             'ORDER BY datum_dagrapportages ASC'
-    )
-
-def get_query_ondersteuningsbehoeften(subject_id) -> str:
-    return (
-            'SELECT DISTINCT sectionType FROM `sensire-dataplatform-prod.transformed_ysis.dagelijkse_zorg_ecd`'
-            f'WHERE clientid = \'{subject_id}\''
     )
 
 

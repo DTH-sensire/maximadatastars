@@ -1,0 +1,20 @@
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: "summarizer"
+    args: ['build', '-t',
+           '${_ARTIFACT_REGISTRY_REPO_URL}/${_SERVICE_NAME}:${SHORT_SHA}', '.']
+
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_ARTIFACT_REGISTRY_REPO_URL}/${_SERVICE_NAME}:${SHORT_SHA}']
+
+  # Deploy to Cloud Run
+  - name: google/cloud-sdk
+    args: ['gcloud', 'run', 'deploy', '${_SERVICE_NAME}',
+           '--image=${_ARTIFACT_REGISTRY_REPO_URL}/${_SERVICE_NAME}:${SHORT_SHA}',
+           '--region', '${_REGION}', '--platform', 'managed']
+
+# Store images in Google Artifact Registry
+images:
+  - ${_ARTIFACT_REGISTRY_REPO_URL}/${_SERVICE_NAME}:${SHORT_SHA}
