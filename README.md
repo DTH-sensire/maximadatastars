@@ -7,7 +7,7 @@ We envision a future where no parent or sibling experiences regret, knowing they
 
 ### Our solution:
 
-We propose a generated activities to do specifically designed for you, knowing the capabilities of your child/sibling and the resources available. With the ultimate goal of creating precious memories together. 
+We propose a generated activities to do specifically designed for you, knowing the capabilities of your child/sibling and the resources available. With the ultimate goal of creating precious memories together. Photos of the activities can be uploaded and AI will generate a memory capsule in the shape of a photo album or photo collage. 
 
 Target audience:
 Parents and siblings of the patient
@@ -34,5 +34,6 @@ Vertex AI (Gemini) will be send the result, what is a great activity to do, back
 * Make the webapp conversational. The user should have to comment on the activitity. There should also be a possibility to say that you have done the activity, let the app know how you experienced the activity and ask for another.
 * Dynamic questions based on the age of parent or sibling. A sibling can get the same question but easier to understand.
 * Test the answers. Is the answer an activity fit for the patient and does the family enjoy them!
+* Add upload capabilities to the app and use Vertex AI to make a photo collage
 
 
