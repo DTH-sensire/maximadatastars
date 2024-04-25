@@ -145,15 +145,68 @@ def GenerateSummary():
     # return (final_output)
 
 
+PROMPT_TEMPLATE = """
+I am the {relation} of {firstname}. I am {relation_age} years old. {firstname} is diagnosed with {diagnosis} and is in stage {diagnosis_stage}.
+{firstname} receives the treatment {treatment} and {medicine}.
+The symptoms are {symptoms}. {firstname} is a {gender} born on {date_of_birth}.
+
+I answered some questions to specify the activities that {firstname} would like:
+
+What are their interests?: {interests}
+Do they have any favorite books, movies, or TV shows?: {favorites}
+Do they enjoy socialising or do they prefer quiet solo activities?: {social_interaction}
+Do they like creative activities such as drawing, arts and crafts, and music?: {creative}
+Are they curious and eager to learn? Are there subjects they are particularly interested in?: {curious}
+Do they enjoy outdoor activities and nature experiences?: {nature}
+Do they have an animal affinity?: {animals}
+Do digital formats like computers, games, and videos pique their interest?: {technology}
+Have they expressed a wish to try something specific?: {wishes}
+Would they prefer indoor activities or spending time in the open air?: {outside}
+
+
+I would like do activities with {firstname}, can you make a list of recommendations based on his capabilities and the place we live: {residence}?
+
+RECOMMENDATIONS:
+"""
+
+
 @app.route("/test", methods=["POST"])
 def test():
     response = request.json["response"]
+    # Retrieve PatientData dictionary
+    patient_data = response["patientData"]
 
-    for field in response:
-        print(f"Field in reponse is: {field}")
-        print(f"Contents of {field}: \n{response[field]}")
+    # Retrieve AnswersQuestions list
+    answers_questions = response["answersAndQuestions"]
+    answers = {}  # make dictionary with question as key and answer as value
+    for item in answers_questions:
+        answers[item['question']] = item['answer']
 
-    response = {"response": response}
+    # Replace the placeholders in the PROMPT_TEMPLATE
+    PROMPT_TEMPLATE.format(relation=answers[f"What is your relationship with {patient_data["firstname"]}"],
+                           firstname=patient_data["firstname"],
+                           relation_age=answers["What is your age?"],
+                           diagnosis=patient_data["diagnosis"],
+                           diagnosis_stage=patient_data["diagnosis_stage"],
+                           treatment=patient_data["treatment"],
+                           medicine=patient_data["medicine"],
+                           symptoms=patient_data["symptoms"],
+                           gender=patient_data["gender"],
+                           date_of_birth=patient_data["date_of_birth"],
+                           interests=answers["What are Jenny's interests?"],
+                           favorites=answers["Does Jenny have any favorite books, movies, or TV shows?"],
+                           social_interaction=answers["Does Jenny enjoy socialising or prefer quiet solo activities?"],
+                           creative=answers["Does Jenny like creative activities such as drawing, arts and crafts, and music?"],
+                           curious=answers["Is Jenny curious and eager to learn? Are there subjects he\/she is particularly interested in?"],
+                           nature=answers["Does Jenny enjoy outdoor activities and nature experiences?"],
+                           animals=answers["Does Jenny have an animal affinity?"],
+                           technology=answers["Do digital formats like computers, games, and videos pique Jenny's interest?"],
+                           wishes=answers["Have Jenny expressed a wish to try something specific?"],
+                           outside=answers["Would Jenny prefer indoor activities or spending time in the open air?"],
+                           residence=patient_data["residence"],
+                           )
+
+    response = {"response": PROMPT_TEMPLATE}
     return response
 
 
