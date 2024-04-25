@@ -177,16 +177,16 @@ def test():
     patient_data = response["patientData"]
 
     # Retrieve AnswersQuestions list
-    answers_questions = response["answersAndQuestions"]
-    answers = {}  # make dictionary with question as key and answer as value
-    for item in answers_questions:
-        answers[item['question']] = item['answer']
+    answers = response["answersAndQuestions"]
+    # answers = {}  # make dictionary with question as key and answer as value
+    # for item in answers_questions:
+    #     answers[item['question']] = item['answer']
 
     # Replace the placeholders in the PROMPT_TEMPLATE
     firstname = patient_data["firstname"]
-    PROMPT_TEMPLATE.format(relation=answers[f"What is your relationship with {firstname}"],
+    PROMPT_TEMPLATE.format(relation=answers["relationship"],
                            firstname=firstname,
-                           relation_age=answers["What is your age?"],
+                           relation_age=answers["age"],
                            diagnosis=patient_data["diagnosis"],
                            diagnosis_stage=patient_data["diagnosis_stage"],
                            treatment=patient_data["treatment"],
@@ -194,16 +194,16 @@ def test():
                            symptoms=patient_data["symptoms"],
                            gender=patient_data["gender"],
                            date_of_birth=patient_data["date_of_birth"],
-                           interests=answers["What are Jenny's interests?"],
-                           favorites=answers["Does Jenny have any favorite books, movies, or TV shows?"],
-                           social_interaction=answers["Does Jenny enjoy socialising or prefer quiet solo activities?"],
-                           creative=answers["Does Jenny like creative activities such as drawing, arts and crafts, and music?"],
-                           curious=answers["Is Jenny curious and eager to learn? Are there subjects he\/she is particularly interested in?"],
-                           nature=answers["Does Jenny enjoy outdoor activities and nature experiences?"],
-                           animals=answers["Does Jenny have an animal affinity?"],
-                           technology=answers["Do digital formats like computers, games, and videos pique Jenny's interest?"],
-                           wishes=answers["Have Jenny expressed a wish to try something specific?"],
-                           outside=answers["Would Jenny prefer indoor activities or spending time in the open air?"],
+                           interests=answers["interests"],
+                           favorites=answers["favorites"],
+                           social_interaction=answers["socialising_activities"],
+                           creative=answers["creative_activities"],
+                           curious=answers["learner"],
+                           nature=answers["outdoor_activities"],
+                           animals=answers["animal_affinity"],
+                           technology=answers["computers_interests"],
+                           wishes=answers["wishes"],
+                           outside=answers["indoor_activities"],
                            residence=patient_data["residence"],
                            )
 
