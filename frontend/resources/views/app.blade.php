@@ -7,6 +7,7 @@
 
     <!-- Alpine Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/marked@0.3.6"></script>
 
     <!-- Alpine Core -->
     <script src="//unpkg.com/alpinejs" defer></script>
@@ -14,9 +15,42 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+
+    <script>
+      document.addEventListener("alpine:initializing", () => {
+        Alpine.directive(
+          "markdown",
+          (el, { expression }, { effect, evaluateLater }) => {
+            let getHTML = evaluateLater(expression);
+
+            effect(() => {
+              getHTML((input) => {
+                el.innerHTML = marked(input, { sanitize: true });
+              });
+            });
+          }
+        );
+      });
+    </script>
+
     <style>
     [x-cloak] {
         display: none !important;
+    }
+
+    .loader {
+      border: 16px solid rgb(186 193 255); /* Light grey */
+      border-top: 16px solid rgb(129 140 248); /* Blue */
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     </style>
 
@@ -26,6 +60,7 @@
         return {
           started: false,
           completed: false,
+          sendingGeminiRequest: false,
           activeQuestionIndex: 0,
           patientId: 0,
           clients: [],
@@ -48,7 +83,7 @@
           ],
           questionErrors: [],
           answers: [],
-          suggestions: '',
+          geminiResponse: {},
           enterAction() {
             return;
             if (!this.started) {
@@ -84,7 +119,7 @@
             this.suggestions = '';
           },
           async complete() {
-            this.completed = true;
+            this.sendingGeminiRequest = true;
 
             let request = await fetch("/get-suggestions", {
               method: "POST",
@@ -102,15 +137,15 @@
             });
 
             let response = await request.json();
-            this.suggestions = response.suggestions;
+            this.sendingGeminiRequest = false;
+            this.completed = true;
+            this.geminiResponse = response;
           },
           showNextQuestion(currentQuestionInput) {
             if (! currentQuestionInput.value) {
                 this.questionErrors[this.activeQuestionIndex] = true;
                 return;
             }
-
-            console.log(this.answers);
 
             this.questionErrors[this.activeQuestionIndex] = false;
             this.activeQuestionIndex++;
@@ -183,12 +218,22 @@
                     </div>
                 </div>
 
-                <!-- Compleet message -->
+                <!-- Loading message -->
+                <div x-show="sendingGeminiRequest">
+                    <h2 class="text-base font-semibold leading-7 text-indigo-400">Maxima's Data Stars</h2>
+
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Gemini is working on the suggestions</p>
+                    <div class="mt-6 text-xl leading-8 text-gray-300 flex items-center flex-col">
+                      <div class="loader"></div>
+                    </div>
+                </div>
+
+                <!-- Complete message -->
                 <div x-show="completed">
                     <h2 class="text-base font-semibold leading-7 text-indigo-400">Maxima's Data Stars</h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Suggestions</p>
 
-                    <p class="mt-6 text-xl leading-8 text-gray-300" x-text="suggestions"></p>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Suggestions</p>
+                    <p class="mt-6 text-sm leading-8 text-gray-300 overflow-auto text-left" style="height: 700px;" x-markdown="geminiResponse.llm_answer"></p>
                     
                     <div class="mx-auto mt-8 flex flex-col items-center flex-1">
                         <div class="flex items-center gap-2 mt-5">
@@ -199,7 +244,7 @@
                 </div>
 
                 <!-- Questions -->
-                <div x-show="started && !completed" id="form" class="flex text-left">
+                <div x-show="started && !completed && !sendingGeminiRequest" id="form" class="flex text-left">
                     <div class="w-full max-w-2xl px-5" id="multistep-form">
                         <div>
                             <form class="p-10" @submit.prevent="">

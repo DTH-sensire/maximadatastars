@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use JfBiswajit\PHPBigQuery\Facades\BigQuery;
 use Google\Cloud\BigQuery\BigQueryClient;
+use Illuminate\Support\Facades\Http;
 
 Route::get('/clients', function () {
     $bigQuery = new BigQueryClient([
@@ -47,18 +48,16 @@ Route::post('/get-suggestions', function () {
     $patientData = $patient[0];
     $patientData['date_of_birth'] = $patientData['date_of_birth']->formatAsString();
 
-    // Get patient data
-    return [
+    // Make Gemini API call
+    $response = Http::post('https://app-v5oh3jgiya-ez.a.run.app/test', [
         'response' => [
             'answersAndQuestions' => $answersAndQuestions,
             'patientData' => $patientData,
         ],
-    ];
-
-    // Make Gemini API call
+    ]);
 
     // Return Gemini suggestions
-    return ["suggestions" => "This are fake suggestions.."];
+    return $response->json();
 });
 
 Route::get('/', function () {
