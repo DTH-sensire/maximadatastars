@@ -12,6 +12,12 @@ We propose a generated activities to do specifically designed for you, knowing t
 Target audience:
 Parents and siblings of the patient
 
+Main screen when you open the app:<br>
+<img width="700" alt="main_screen" src="https://github.com/DTH-sensire/maximadatastars/blob/main/images/main_screen.png">
+
+An example question:<br>
+<img width="700" alt="main_screen" src="https://github.com/DTH-sensire/maximadatastars/blob/main/images/example_question.png">
+
 ### General architecture
 
 There will be an dynamic webapp where parents or siblings get questions about their child/sibling. Medical and/or general data like age and diagnosis about the child will be available in BigQuery.
